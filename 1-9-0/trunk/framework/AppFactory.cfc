@@ -89,6 +89,8 @@ Notes:
 			hint="Optional argument for override Xml for a module. Defaults to empty string." />
 		<cfargument name="moduleName" type="string" required="false" default=""
 			hint="Optional argument for the name of a module. Defaults to empty string." />
+		<cfargument name="inheritCallBacks" type="boolean" required="false" default=""
+			hint="Optional argument for a module to inherit parental callbacks" />
 
 		<cfset var appManager = "" />
 		<cfset var propertyManager = "" />
@@ -121,6 +123,13 @@ Notes:
 		<cfset appManager.setAppKey(arguments.appkey) />
 		<cfif Len(arguments.moduleName)>
 			<cfset appManager.setModuleName(arguments.moduleName) />
+		</cfif>
+
+		<!--- Import Callbacks From parent App Manager --->
+		<cfif NOT isSimplevalue(arguments.parentAppManager) AND arguments.inheritCallBacks>
+			<cfloop index="i" array="#arguments.parentAppManager.getOnObjectReloadCallBacks()#">
+				<cfset appManager.addOnObjectReloadCallback(i.callback, i.method) />
+			</cfloop>
 		</cfif>
 
 		<!--- Put a reference of the utils into the variables so loadIncludes can use it --->

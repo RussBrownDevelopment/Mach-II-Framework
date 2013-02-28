@@ -109,6 +109,7 @@ Notes:
 		<cfset var overrideXml = "" />
 		<cfset var i = 0 />
 		<cfset var lazyLoad = "" />
+		<cfset var inheritCallBacks = false />
 
 		<!--- Setup up each Module. --->
 		<cfif NOT arguments.override>
@@ -119,7 +120,12 @@ Notes:
 		<cfloop from="1" to="#ArrayLen(moduleNodes)#" index="i">
 			<cfset name = moduleNodes[i].xmlAttributes["name"] />
 			<cfset file = moduleNodes[i].xmlAttributes["file"] />
-
+			
+			<!--- inheritCallBacks --->
+			<cfif structKeyExists(moduleNodes[i].xmlAttributes, "inheritCallBacks") AND isBoolean(moduleNodes[i].xmlAttributes.inheritCallBacks)>
+				<cfset inheritCallBacks = moduleNodes[i].xmlAttributes.inheritCallBacks />
+			</cfif>
+			
 			<!--- Resolve the file path --->
 			<cfif Left(file, 1) IS ".">
 				<cfset file = getAppManager().getUtils().expandRelativePath(getBaseConfigFileDirectory(), file) />
@@ -136,7 +142,7 @@ Notes:
 			<cftry>
 				<!--- Setup the Module. --->
 				<cfset module = CreateObject("component", "MachII.framework.Module") />
-				<cfset module.init(getAppManager(), name, file, overrideXml) />
+				<cfset module.init(getAppManager(), name, file, overrideXml, inheritCallBacks) />
 
 				<cfset lazyLoad = getAppManager().getPropertyManager().getProperty("modules:lazyLoad", "!*") />
 				<cfif lazyLoad EQ "*" OR ListFindNoCase(lazyLoad, name) >

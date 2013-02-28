@@ -63,6 +63,7 @@ Notes:
 	<cfset variables.appLoader = "" />
 	<cfset variables.dtdPath = "" />
 	<cfset variables.overrideXml = "" />
+	<cfset variables.inheritCallBacks = false />
 	<cfset variables.enabled = true />
 	<cfset variables.loadException = "" />
 	<cfset variables.loaded = false />
@@ -79,11 +80,13 @@ Notes:
 		<cfargument name="moduleName" type="string" required="true" />
 		<cfargument name="file" type="string" required="true" />
 		<cfargument name="overrideXml" type="any" required="true" />
+		<cfargument name="inheritCallBacks" type="Boolean" required="false" default="false" />
 
 		<cfset setFile(arguments.file) />
 		<cfset setModuleName(arguments.moduleName) />
 		<cfset setAppManager(arguments.appManager) />
 		<cfset setOverrideXml(arguments.overrideXml) />
+		<cfset setInheritCallBacks(arguments.inheritCallBacks) />
 
 		<cfreturn this />
 	</cffunction>
@@ -112,7 +115,7 @@ Notes:
 			<cftry>
 				<cfset appLoader = CreateObject("component", "MachII.framework.AppLoader") />
 				<cfset appLoader.init(getFile(), getDtdPath(), getAppManager().getAppKey(),
-						getValidateXml(), getAppManager(), getOverrideXml(), getModuleName()) />
+						getValidateXml(), getAppManager(), getOverrideXml(), getModuleName(), getInheritCallBacks()) />
 
 				<cfset moduleAppManager = appLoader.getAppManager() />
 				<cfset moduleAppManager.setAppLoader(appLoader) />
@@ -296,6 +299,16 @@ Notes:
 	<cffunction name="getOverrideXml" access="public" type="any" output="false"
 		hint="Gets the override Xml for this module.">
 		<cfreturn variables.overrideXml />
+	</cffunction>
+
+	<cffunction name="setInheritCallBacks" access="public" returntype="void" output="false"
+		hint="Sets the override Xml for this module.">
+		<cfargument name="inheritCallBacks" type="any" required="true" />
+		<cfset variables.inheritCallBacks = arguments.inheritCallBacks />
+	</cffunction>
+	<cffunction name="getInheritCallBacks" access="public" type="any" output="false"
+		hint="Gets the override Xml for this module.">
+		<cfreturn variables.inheritCallBacks />
 	</cffunction>
 
 </cfcomponent>

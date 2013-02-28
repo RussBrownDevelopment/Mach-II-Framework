@@ -65,6 +65,7 @@ Notes:
 	<cfset variables.overrideXml = "" />
 	<cfset variables.lastReloadDatetime = "" />
 	<cfset variables.appKey = "" />
+	<cfset variables.inheritCallBacks = false />
 
 	<!---
 	INITIALIZATION / CONFIGURATION
@@ -85,6 +86,8 @@ Notes:
 			hint="Optional argument for override Xml for a module. Default to empty string." />
 		<cfargument name="moduleName" type="string" required="false" default=""
 			hint="Optional argument for the name of a module. Defaults to empty string." />
+		<cfargument name="inheritCallBacks" type="Boolean" required="false" default="false"
+			hint="Optional argument for a module to inherit parental callbacks" />
 
 		<cfset var appFactory = CreateObject("component", "MachII.framework.AppFactory").init() />
 		
@@ -96,6 +99,7 @@ Notes:
 		<cfset setOverrideXml(arguments.overrideXml) />
 		<cfset setModuleName(arguments.moduleName) />
 		<cfset setAppKey(arguments.appKey) />
+		<cfset setInheritCallBacks(arguments.inheritCallBacks) />
 
 		<!--- (Re)Load the configuration. --->
 		<cfset reloadConfig(arguments.validateXml, arguments.parentAppManager) />
@@ -169,7 +173,7 @@ Notes:
 		<cftry>
 			<cfset updateLastReloadDatetime() />
 			<cfset setAppManager(getAppFactory().createAppManager(getConfigPath(), getDtdPath(),
-					getAppKey(), getValidateXml(), arguments.parentAppManager, getOverrideXml(), getModuleName())) />
+					getAppKey(), getValidateXml(), arguments.parentAppManager, getOverrideXml(), getModuleName(), getInheritCallBacks())) />
 			<cfset getAppManager().setAppLoader(this) />
 			<cfset getAppManager().getRequestManager().setTrackCurrentThreads(true) />
 			<cfset setLastReloadHash(getConfigFileReloadHash()) />
@@ -364,6 +368,14 @@ Notes:
 	</cffunction>
 	<cffunction name="getAppKey" access="public" type="string" output="false">
 		<cfreturn variables.appkey />
+	</cffunction>
+
+	<cffunction name="setInheritCallBacks" access="public" returntype="void" output="false">
+		<cfargument name="inheritCallBacks" type="string" required="true" />
+		<cfset variables.inheritCallBacks = arguments.inheritCallBacks />
+	</cffunction>
+	<cffunction name="getInheritCallBacks" access="public" type="string" output="false">
+		<cfreturn variables.inheritCallBacks />
 	</cffunction>
 
 	<cffunction name="setLog" access="private" returntype="void" output="false"
